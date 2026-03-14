@@ -1,0 +1,24 @@
+# local.zsh - マシン固有の設定テンプレート
+# このファイルを local.zsh にコピーして使用（gitignore対象）
+#
+# 使い方:
+#   cp local.zsh.example local.zsh
+#   nvim local.zsh
+
+# --- マシン固有の環境変数 ---
+# export WORK_DIR="$HOME/work/project-name"
+# export AWS_PROFILE="my-profile"
+
+# --- マシン固有のエイリアス ---
+# alias work='cd $WORK_DIR'
+
+# --- マシン固有のPATH追加 ---
+# path=("$HOME/custom/bin" $path)
+
+# --- プロキシ設定（オフィス環境など）---
+# export HTTP_PROXY="http://proxy.example.com:8080"
+# export HTTPS_PROXY="$HTTP_PROXY"
+# export NO_PROXY="localhost,127.0.0.1"
+
+# --- SSH Agent転送 ---
+# export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"

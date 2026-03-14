@@ -1,0 +1,34 @@
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+
+# エディタ
+*.swp
+*.swo
+*~
+
+# シークレット
+.env
+.env.local
+
+# 秘密鍵・証明書
+*.pem
+*.key
+id_rsa
+id_ed25519
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# ログ
+*.log
+
+# Node.js
+node_modules/

@@ -1,0 +1,64 @@
+# [user] セクションは ~/.gitconfig.local に定義してください
+# 例:
+#   [user]
+#     name = yourname
+#     email = yourname@example.com
+
+[credential]
+	helper = osxkeychain
+
+[core]
+	quotepath = false
+	precomposeunicode = true
+	autocrlf = input
+	editor = nvim
+	pager = delta
+
+[i18n]
+	commitEncoding = UTF-8
+	logOutputEncoding = UTF-8
+
+[init]
+	defaultBranch = main
+
+[pull]
+	rebase = true
+
+[push]
+	autoSetupRemote = true
+	default = current
+
+[fetch]
+	prune = true
+
+[diff]
+	algorithm = histogram
+
+[merge]
+	conflictstyle = zdiff3
+
+[transfer]
+	fsckObjects = true
+
+[receive]
+	fsckObjects = true
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	side-by-side = true
+
+[rebase]
+	autosquash = true
+	autoStash = true
+
+[alias]
+	st = status
+	co = checkout
+	br = branch
+	lg = log --oneline --graph --decorate
+
+[include]
+	path = ~/.gitconfig.local
