@@ -16,3 +16,21 @@ secrets/.env*
 
 # ローカル設定
 **/local.zsh
+
+# SSH / GPG 鍵（誤コミット防止）
+*.pem
+*.key
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+id_ecdsa
+id_ecdsa.pub
+secring.*
+
+# AWS 認証情報
+.aws/credentials
+
+# その他シークレット系
+*.secret
+credentials.json

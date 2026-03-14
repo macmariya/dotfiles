@@ -40,7 +40,7 @@ softwareupdate --list
 
 ```zsh
 mkdir -p ~/dev
-git clone https://github.com/macmariya/dotfiles.git ~/dev/dotfiles
+git clone https://github.com/<your-username>/dotfiles.git ~/dev/dotfiles
 cd ~/dev/dotfiles
 ```
 
