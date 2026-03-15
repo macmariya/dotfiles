@@ -245,6 +245,7 @@ brew "ripgrep"
 
 # GUI アプリ
 cask "visual-studio-code"
+cask "cursor"
 
 # フォント
 cask "font-fira-code-nerd-font"
@@ -451,14 +452,16 @@ return {
 
 よく使う遅延読み込みトリガー:
 
-| トリガー | タイミング |
-|---------|-----------|
-| `event = "VeryLazy"` | 起動完了後 |
-| `event = { "BufReadPre", "BufNewFile" }` | ファイルを開いた時 |
-| `event = "InsertEnter"` | インサートモード開始時 |
-| `cmd = "CommandName"` | 特定コマンド実行時 |
-| `keys = { "<leader>x" }` | 特定キー押下時 |
-| `ft = "python"` | 特定ファイルタイプ時 |
+
+| トリガー                                     | タイミング       |
+| ---------------------------------------- | ----------- |
+| `event = "VeryLazy"`                     | 起動完了後       |
+| `event = { "BufReadPre", "BufNewFile" }` | ファイルを開いた時   |
+| `event = "InsertEnter"`                  | インサートモード開始時 |
+| `cmd = "CommandName"`                    | 特定コマンド実行時   |
+| `keys = { "<leader>x" }`                 | 特定キー押下時     |
+| `ft = "python"`                          | 特定ファイルタイプ時  |
+
 
 ### LSP サーバーの追加
 
@@ -513,19 +516,22 @@ require("catppuccin").setup({
 
 ### プラグインの管理コマンド
 
-| コマンド | 説明 |
-|---------|------|
-| `:Lazy` | プラグインマネージャ UI を開く |
-| `:Lazy update` | 全プラグインを更新 |
-| `:Lazy sync` | インストール + 更新 + クリーンアップ |
-| `:Mason` | LSP サーバー管理 UI を開く |
-| `:TSInstallInfo` | Treesitter パーサー状態 |
-| `:checkhealth` | 全体の健全性チェック |
+
+| コマンド             | 説明                    |
+| ---------------- | --------------------- |
+| `:Lazy`          | プラグインマネージャ UI を開く     |
+| `:Lazy update`   | 全プラグインを更新             |
+| `:Lazy sync`     | インストール + 更新 + クリーンアップ |
+| `:Mason`         | LSP サーバー管理 UI を開く     |
+| `:TSInstallInfo` | Treesitter パーサー状態     |
+| `:checkhealth`   | 全体の健全性チェック            |
+
 
 ### 参考リソース
 
-- lazy.nvim: <https://github.com/folke/lazy.nvim>
-- nvim-lspconfig: <https://github.com/neovim/nvim-lspconfig>
-- Mason: <https://github.com/williamboman/mason.nvim>
-- Telescope: <https://github.com/nvim-telescope/telescope.nvim>
-- Catppuccin for Neovim: <https://github.com/catppuccin/nvim>
+- lazy.nvim: [https://github.com/folke/lazy.nvim](https://github.com/folke/lazy.nvim)
+- nvim-lspconfig: [https://github.com/neovim/nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)
+- Mason: [https://github.com/williamboman/mason.nvim](https://github.com/williamboman/mason.nvim)
+- Telescope: [https://github.com/nvim-telescope/telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
+- Catppuccin for Neovim: [https://github.com/catppuccin/nvim](https://github.com/catppuccin/nvim)
+
