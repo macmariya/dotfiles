@@ -93,7 +93,7 @@ make help    # コマンド一覧を表示
 | `tmux` | tmux 設定 | True Color、vim 風キーバインド、Catppuccin Mocha テーマ、Claude 使用量表示 |
 | `ghostty` | Ghostty ターミナル | HackGen Console NF 14pt、Catppuccin Mocha、透過タイトルバー |
 | `nvim` | Neovim | lazy.nvim + 29 プラグイン（LSP, 補完, Telescope, Treesitter, Catppuccin Mocha） |
-| `ssh` | SSH 設定 | Ed25519 デフォルト、macOS Keychain 連携、暗号化アルゴリズム制限、config.d/ によるモジュラー構成 |
+| `ssh` | SSH 設定 | Ed25519 デフォルト、macOS Keychain 連携、暗号化アルゴリズム制限、Ghostty 文字崩れ対策、config.d/ によるモジュラー構成 |
 
 ## ディレクトリ構成
 
