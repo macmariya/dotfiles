@@ -218,6 +218,21 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# Phase 10: Claude Code
+# ---------------------------------------------------------------------------
+phase 10 "Claude Code"
+
+if command -v claude &>/dev/null; then
+  success "Claude Code は既にインストール済みです: $(claude --version 2>/dev/null || echo 'installed')"
+else
+  info "Claude Code をインストールします..."
+  curl -fsSL https://claude.ai/install.sh | sh
+  success "Claude Code のインストールが完了しました"
+  info "初回起動時にブラウザでサブスクリプション認証を行ってください:"
+  info "  claude"
+fi
+
+# ---------------------------------------------------------------------------
 # 完了メッセージ
 # ---------------------------------------------------------------------------
 printf "\n%b========================================%b\n" "\033[1;32m" "\033[0m"
@@ -226,3 +241,4 @@ printf "%b========================================%b\n" "\033[1;32m" "\033[0m"
 printf "\n次のステップ:\n"
 printf "  1. zsh を再起動: exec zsh\n"
 printf "  2. シークレット未登録の場合: %s/secrets/setup-secrets.sh\n" "$DOTFILES"
+printf "  3. Claude Code 認証: claude を実行してブラウザで認証\n"

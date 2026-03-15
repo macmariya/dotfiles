@@ -78,6 +78,7 @@ make install
 | Phase 7 | SSH パーミッション修正 & Ed25519 鍵生成（対話式） |
 | Phase 8 | macOS Keychain にシークレットが登録済みかチェック |
 | Phase 9 | macOS システム設定の適用（対話形式で確認あり） |
+| Phase 10 | Claude Code のインストール（スタンドアロンインストーラー） |
 
 Phase 7 では以下の処理が自動的に行われます。
 
@@ -322,7 +323,29 @@ nvim -c ':TSInstallInfo'
 
 ---
 
-## Step 9: シェルの再起動と動作確認
+## Step 9: Claude Code の認証
+
+Claude Code は `bootstrap.sh` の Phase 10 で自動インストールされます。
+初回利用時にサブスクリプション認証が必要です。
+
+```zsh
+claude
+```
+
+ブラウザが開き、Claude Pro / Max サブスクリプションでの認証画面が表示されます。
+認証完了後、ターミナルに戻ると Claude Code が使用可能になります。
+
+### 動作確認
+
+```zsh
+claude --version
+```
+
+> **ヒント:** 手動でインストールする場合は `curl -fsSL https://claude.ai/install.sh | sh` を実行してください。
+
+---
+
+## Step 10: シェルの再起動と動作確認
 
 全設定が完了したらシェルを再起動します。
 
