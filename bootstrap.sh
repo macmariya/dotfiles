@@ -8,7 +8,7 @@ set -euo pipefail
 # ---------------------------------------------------------------------------
 # スクリプト自身の絶対パスから dotfiles ルートを自動検出
 DOTFILES="${0:A:h}"
-STOW_PACKAGES=(zsh git tmux nvim ghostty bin)
+STOW_PACKAGES=(zsh git tmux nvim ghostty bin ssh)
 OMZ_DIR="${HOME}/.oh-my-zsh"
 OMZ_CUSTOM="${OMZ_DIR}/custom/plugins"
 TPM_DIR="${HOME}/.tmux/plugins/tpm"
@@ -141,9 +141,50 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# Phase 7: シークレット設定チェック（Keychain）
+# Phase 7: SSH パーミッション修正 & 鍵生成
 # ---------------------------------------------------------------------------
-phase 7 "シークレット設定チェック"
+phase 7 "SSH 設定"
+
+# パーミッション修正（stow 後に必ず実行）
+if [[ -d "${HOME}/.ssh" ]]; then
+  chmod 700 "${HOME}/.ssh"
+  chmod 600 "${HOME}/.ssh/config" 2>/dev/null || true
+  chmod 700 "${HOME}/.ssh/config.d" 2>/dev/null || true
+  success "SSH ディレクトリのパーミッションを修正しました"
+fi
+
+# Ed25519 鍵が存在しなければ生成を提案
+SSH_KEY="${HOME}/.ssh/id_ed25519"
+if [[ -f "$SSH_KEY" ]]; then
+  success "SSH 鍵は既に存在します: ${SSH_KEY}"
+else
+  warn "SSH 鍵が見つかりません: ${SSH_KEY}"
+  printf "\n%b SSH Ed25519 鍵を生成しますか？ (y/N): %b" "\033[1;33m" "\033[0m"
+  read -r _reply
+  if [[ "${_reply}" =~ ^[Yy]$ ]]; then
+    printf "メールアドレスを入力してください: "
+    read -r _email
+    if [[ -n "$_email" ]]; then
+      ssh-keygen -t ed25519 -C "$_email" -f "$SSH_KEY"
+      chmod 600 "$SSH_KEY"
+      chmod 644 "${SSH_KEY}.pub"
+      success "SSH 鍵を生成しました: ${SSH_KEY}"
+      info "公開鍵を GitHub に登録してください:"
+      info "  cat ${SSH_KEY}.pub | pbcopy"
+      info "  https://github.com/settings/keys"
+    else
+      warn "メールアドレスが空のためスキップします"
+    fi
+  else
+    info "SSH 鍵の生成をスキップしました"
+    info "  後で生成: ssh-keygen -t ed25519 -C \"your@email.com\""
+  fi
+fi
+
+# ---------------------------------------------------------------------------
+# Phase 8: シークレット設定チェック（Keychain）
+# ---------------------------------------------------------------------------
+phase 8 "シークレット設定チェック"
 
 _check_keychain() {
   local service="$1" account="$2" label="$3"
@@ -158,9 +199,9 @@ _check_keychain() {
 _check_keychain "github-pat" "${USER}" "GitHub PAT"
 
 # ---------------------------------------------------------------------------
-# Phase 8: macOS システム設定
+# Phase 9: macOS システム設定
 # ---------------------------------------------------------------------------
-phase 8 "macOS システム設定"
+phase 9 "macOS システム設定"
 
 MACOS_SCRIPT="${DOTFILES}/macos.sh"
 if [[ ! -f "$MACOS_SCRIPT" ]]; then
@@ -180,7 +221,7 @@ fi
 # ---------------------------------------------------------------------------
 # Phase 9: TPM（Tmux Plugin Manager）
 # ---------------------------------------------------------------------------
-phase 9 "TPM (Tmux Plugin Manager)"
+phase 10 "TPM (Tmux Plugin Manager)"
 
 if [[ -d "$TPM_DIR" ]]; then
   success "TPM は既にインストール済みです"

@@ -5,12 +5,12 @@ SHELL := /bin/zsh
 DOTFILES := $(shell pwd)
 
 # GNU Stow で管理するパッケージ一覧
-STOW_PACKAGES := zsh git tmux nvim ghostty bin
+STOW_PACKAGES := zsh git tmux nvim ghostty bin ssh
 
 # stow コマンドの共通オプション
 STOW_FLAGS := --restow --target=$(HOME) --dir=$(DOTFILES)
 
-.PHONY: install update stow unstow brew brew-dump macos clean help
+.PHONY: install update stow unstow brew brew-dump macos clean ssh-fix help
 
 # デフォルトターゲット: ヘルプを表示
 .DEFAULT_GOAL := help
@@ -41,6 +41,7 @@ stow:
 		fi \
 	done
 	@echo "\033[0;32m[OK] stow が完了しました\033[0m"
+	@$(MAKE) ssh-fix
 
 ## unstow: 全パッケージのシンボリックリンクを削除する
 unstow:
@@ -76,6 +77,21 @@ macos:
 	else \
 		echo "\033[0;31m[ERROR] macos.sh が見つかりません\033[0m"; \
 		exit 1; \
+	fi
+
+## ssh-fix: SSH ディレクトリとファイルのパーミッションを修正する
+ssh-fix:
+	@echo "\033[1;36m==> SSH パーミッション修正\033[0m"
+	@if [ -d "$(HOME)/.ssh" ]; then \
+		chmod 700 $(HOME)/.ssh; \
+		chmod 600 $(HOME)/.ssh/config 2>/dev/null || true; \
+		chmod 700 $(HOME)/.ssh/config.d 2>/dev/null || true; \
+		chmod 600 $(HOME)/.ssh/config.d/* 2>/dev/null || true; \
+		chmod 600 $(HOME)/.ssh/id_* 2>/dev/null || true; \
+		chmod 644 $(HOME)/.ssh/*.pub 2>/dev/null || true; \
+		echo "\033[0;32m[OK] SSH パーミッションを修正しました\033[0m"; \
+	else \
+		echo "\033[0;33m[WARN] ~/.ssh が見つかりません — スキップ\033[0m"; \
 	fi
 
 ## clean: 壊れたシンボリックリンクを検出して一覧表示する

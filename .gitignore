@@ -17,6 +17,10 @@ secrets/.env*
 # ローカル設定
 **/local.zsh
 
+# SSH ホスト固有設定（config.d/ 内のファイル）
+ssh/.ssh/config.d/*
+!ssh/.ssh/config.d/.gitkeep
+
 # SSH / GPG 鍵（誤コミット防止）
 *.pem
 *.key

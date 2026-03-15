@@ -40,7 +40,7 @@ ls -la ~/.config/starship.toml
 STOW_PACKAGES := zsh git tmux nvim ghostty
 
 # 変更後（starship を追加した例）
-STOW_PACKAGES := zsh git tmux nvim ghostty starship
+STOW_PACKAGES := zsh git tmux nvim ghostty bin ssh starship
 ```
 
 `bootstrap.sh` の該当行も同様に編集します。
@@ -50,7 +50,7 @@ STOW_PACKAGES := zsh git tmux nvim ghostty starship
 STOW_PACKAGES=(zsh git tmux nvim ghostty)
 
 # 変更後
-STOW_PACKAGES=(zsh git tmux nvim ghostty starship)
+STOW_PACKAGES=(zsh git tmux nvim ghostty bin ssh starship)
 ```
 
 ### Stow のディレクトリ構造ルール
@@ -124,6 +124,61 @@ cat > ~/.gitconfig.local << 'EOF'
 [core]
     sshCommand = ssh -i ~/.ssh/id_work
 EOF
+```
+
+---
+
+## SSH 設定のカスタマイズ
+
+### config.d/ によるホスト固有設定の追加
+
+`~/.ssh/config.d/` ディレクトリはホスト固有の SSH 設定を置く場所です。
+このディレクトリ内のファイルは Git 管理から除外されており、機密情報を安全に保管できます。
+
+接続先ごとにファイルを分けて管理します。
+
+```
+# ~/.ssh/config.d/work.conf
+Host work-server
+    HostName server.example.com
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519_work
+    Port 22
+```
+
+### 複数の SSH 鍵の管理
+
+用途ごとに鍵を生成して使い分けます。
+
+```zsh
+# 新しい鍵を生成する
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+
+# ssh-agent に追加する
+ssh-add ~/.ssh/id_ed25519_work
+```
+
+### 踏み台サーバー（ProxyJump）の設定例
+
+内部サーバーへ踏み台経由で接続する場合は `ProxyJump` を使います。
+
+```
+Host bastion
+    HostName bastion.example.com
+    User admin
+
+Host internal
+    HostName 10.0.1.100
+    User deploy
+    ProxyJump bastion
+```
+
+### パーミッションの修正
+
+SSH 鍵ファイルのパーミッションがずれた場合は以下を実行します。
+
+```zsh
+make ssh-fix
 ```
 
 ---

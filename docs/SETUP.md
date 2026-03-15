@@ -74,12 +74,20 @@ make install
 | Phase 3 | `Brewfile` からパッケージを一括インストール |
 | Phase 4 | Oh My Zsh のインストール |
 | Phase 5 | Oh My Zsh カスタムプラグイン（syntax-highlighting, autosuggestions） |
-| Phase 6 | GNU Stow でシンボリックリンクを作成（zsh, git, tmux, nvim, ghostty）。Neovim 設定も含む |
-| Phase 7 | macOS Keychain にシークレットが登録済みかチェック |
-| Phase 8 | macOS システム設定の適用（対話形式で確認あり） |
-| Phase 9 | TPM（Tmux Plugin Manager）のインストール |
+| Phase 6 | GNU Stow でシンボリックリンクを作成（zsh, git, tmux, nvim, ghostty, bin, ssh）。Neovim 設定も含む |
+| Phase 7 | SSH パーミッション修正 & Ed25519 鍵生成（対話式） |
+| Phase 8 | macOS Keychain にシークレットが登録済みかチェック |
+| Phase 9 | macOS システム設定の適用（対話形式で確認あり） |
+| Phase 10 | TPM（Tmux Plugin Manager）のインストール |
 
-Phase 8 では以下のプロンプトが表示されます。
+Phase 7 では以下の処理が自動的に行われます。
+
+- `~/.ssh` ディレクトリのパーミッションを 700 に修正
+- `~/.ssh/config` ファイルのパーミッションを 600 に修正
+- Ed25519 鍵が存在しない場合、鍵の生成を提案
+- 公開鍵を GitHub に登録する方法を案内
+
+Phase 9 では以下のプロンプトが表示されます。
 
 ```
 macOS のシステム設定を適用しますか？ (y/N):
@@ -132,6 +140,58 @@ security find-generic-password -s github-pat -a $USER -w
 
 ```zsh
 export GITHUB_TOKEN=$(security find-generic-password -s github-pat -a $USER -w)
+```
+
+---
+
+## Step 4.5: SSH 鍵の設定
+
+`bootstrap.sh` の Phase 7 が SSH ディレクトリのパーミッション修正と鍵生成を自動的に処理します。
+手動で設定したい場合や確認が必要な場合は以下の手順を参照してください。
+
+### Ed25519 鍵の生成
+
+```zsh
+ssh-keygen -t ed25519 -C "your@email.com"
+```
+
+プロンプトに従って保存先（デフォルト: `~/.ssh/id_ed25519`）とパスフレーズを設定します。
+
+### 公開鍵のコピー
+
+```zsh
+cat ~/.ssh/id_ed25519.pub | pbcopy
+```
+
+クリップボードに公開鍵がコピーされます。
+
+### GitHub への登録
+
+1. <https://github.com/settings/keys> にアクセス
+2. 「New SSH key」をクリック
+3. タイトルを入力（例: `MacBook Pro M5`）
+4. 「Key」欄にクリップボードの内容を貼り付け
+5. 「Add SSH key」をクリック
+
+### 接続テスト
+
+```zsh
+ssh -T git@github.com
+```
+
+`Hi <username>! You've successfully authenticated` と表示されれば成功です。
+
+### ホスト固有の設定
+
+ホストごとの SSH 設定は `~/.ssh/config.d/` ディレクトリに個別ファイルとして追加できます。
+Stow によって作成された `~/.ssh/config` が `Include ~/.ssh/config.d/*` で自動的に読み込みます。
+
+```zsh
+# 例: ~/.ssh/config.d/work
+Host work-server
+  HostName 192.168.1.100
+  User deploy
+  IdentityFile ~/.ssh/id_ed25519_work
 ```
 
 ---
@@ -315,6 +375,7 @@ ls -la ~/.zshrc             # -> ~/dev/dotfiles/zsh/.zshrc
 ls -la ~/.gitconfig         # -> ~/dev/dotfiles/git/.gitconfig
 ls -la ~/.tmux.conf         # -> ~/dev/dotfiles/tmux/.tmux.conf
 ls -la ~/.config/nvim       # -> ~/dev/dotfiles/nvim/.config/nvim
+ls -la ~/.ssh/config        # -> ~/dev/dotfiles/ssh/.ssh/config
 
 # Neovim プラグインがインストールされているか
 ls ~/.local/share/nvim/lazy/ | wc -l  # 29 と表示されれば OK
@@ -450,6 +511,36 @@ brew reinstall --cask font-hackgen-console-nerd-font
 ```
 # ~/.config/ghostty/config
 font-family = JetBrainsMono Nerd Font
+```
+
+---
+
+### SSH の接続エラー
+
+**Permission denied (publickey) が表示される場合:**
+
+SSH ディレクトリやファイルのパーミッションが正しくない可能性があります。
+
+```zsh
+make ssh-fix
+```
+
+このコマンドで `~/.ssh` を 700、`~/.ssh/config` を 600 に修正します。
+
+**SSH エージェントが鍵を転送しない場合:**
+
+`~/.ssh/config` に以下の設定が含まれているか確認します。
+
+```
+Host *
+  AddKeysToAgent yes
+  UseKeychain yes
+```
+
+設定を追加した後、エージェントに鍵を再登録します。
+
+```zsh
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
 ```
 
 ---
