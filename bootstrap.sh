@@ -11,7 +11,6 @@ DOTFILES="${0:A:h}"
 STOW_PACKAGES=(zsh git tmux nvim ghostty bin ssh)
 OMZ_DIR="${HOME}/.oh-my-zsh"
 OMZ_CUSTOM="${OMZ_DIR}/custom/plugins"
-TPM_DIR="${HOME}/.tmux/plugins/tpm"
 
 # ---------------------------------------------------------------------------
 # カラー付きログ出力関数
@@ -219,21 +218,6 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# Phase 9: TPM（Tmux Plugin Manager）
-# ---------------------------------------------------------------------------
-phase 10 "TPM (Tmux Plugin Manager)"
-
-if [[ -d "$TPM_DIR" ]]; then
-  success "TPM は既にインストール済みです"
-else
-  info "TPM をインストールします..."
-  mkdir -p "${HOME}/.tmux/plugins"
-  git clone --depth=1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
-  success "TPM のインストールが完了しました"
-  info "tmux 内で prefix + I を押してプラグインをインストールしてください"
-fi
-
-# ---------------------------------------------------------------------------
 # 完了メッセージ
 # ---------------------------------------------------------------------------
 printf "\n%b========================================%b\n" "\033[1;32m" "\033[0m"
@@ -242,4 +226,3 @@ printf "%b========================================%b\n" "\033[1;32m" "\033[0m"
 printf "\n次のステップ:\n"
 printf "  1. zsh を再起動: exec zsh\n"
 printf "  2. シークレット未登録の場合: %s/secrets/setup-secrets.sh\n" "$DOTFILES"
-printf "  3. tmux プラグイン: tmux 起動後に prefix + I\n\n"

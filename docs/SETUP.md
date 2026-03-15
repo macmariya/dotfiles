@@ -78,7 +78,6 @@ make install
 | Phase 7 | SSH パーミッション修正 & Ed25519 鍵生成（対話式） |
 | Phase 8 | macOS Keychain にシークレットが登録済みかチェック |
 | Phase 9 | macOS システム設定の適用（対話形式で確認あり） |
-| Phase 10 | TPM（Tmux Plugin Manager）のインストール |
 
 Phase 7 では以下の処理が自動的に行われます。
 
@@ -323,36 +322,7 @@ nvim -c ':TSInstallInfo'
 
 ---
 
-## Step 9: tmux プラグインのインストール
-
-TPM（Tmux Plugin Manager）は `bootstrap.sh` でインストール済みですが、
-プラグイン自体は tmux 内で手動インストールが必要です。
-
-```zsh
-tmux
-```
-
-tmux を起動した後、以下のキー操作を行います。
-
-```
-prefix + I
-```
-
-> `prefix` はデフォルトで `Ctrl+b` です。
-
-インストール後、ステータスバー右側に Claude Code の使用量が表示されることを確認します。
-
-### TPM のメンテナンスコマンド
-
-| 操作 | キーバインド |
-|------|------------|
-| プラグインインストール | `prefix + I` |
-| プラグイン更新 | `prefix + U` |
-| 不要プラグイン削除 | `prefix + Alt + u` |
-
----
-
-## Step 10: シェルの再起動と動作確認
+## Step 9: シェルの再起動と動作確認
 
 全設定が完了したらシェルを再起動します。
 
@@ -553,7 +523,6 @@ ssh-add --apple-use-keychain ~/.ssh/id_ed25519
 | Oh My Zsh | <https://ohmyz.sh> |
 | GNU Stow | <https://www.gnu.org/software/stow/> |
 | Ghostty | <https://ghostty.org> |
-| TPM | <https://github.com/tmux-plugins/tpm> |
 | HackGen フォント | <https://github.com/yuru7/HackGen> |
 | lazy.nvim | <https://github.com/folke/lazy.nvim> |
 | Mason | <https://github.com/williamboman/mason.nvim> |
