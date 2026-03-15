@@ -29,6 +29,13 @@ alias gpull='git pull'
 # マシン固有の接続先は local.zsh に定義してください
 # 例: alias codeT3='code --remote ssh-remote+<host> /path/to/project'
 
+# --- Docker ---
+alias d='docker'
+alias dc='docker compose'
+alias dps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
+alias dimg='docker images'
+alias dprune='docker system prune -af'
+
 # --- 安全策 ---
 alias rm='rm -i'
 alias cp='cp -i'
