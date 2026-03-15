@@ -135,7 +135,13 @@ else
     if [[ -d "$pkg_dir" ]]; then
       info "stow: ${pkg}"
       # --restow で既存リンクを更新、--target でホームディレクトリを明示
-      stow --restow --target="${HOME}" --dir="${DOTFILES}" "$pkg"
+      # --adopt で既存ファイルをリポジトリに取り込みリンクに置き換える
+      if ! stow --restow --target="${HOME}" --dir="${DOTFILES}" "$pkg" 2>/dev/null; then
+        warn "${pkg}: 既存ファイルとの競合を検出 — --adopt で取り込みます"
+        stow --adopt --target="${HOME}" --dir="${DOTFILES}" "$pkg"
+        # adopt 後に restow でリポジトリ側の内容を正とする
+        stow --restow --target="${HOME}" --dir="${DOTFILES}" "$pkg"
+      fi
       success "stow 完了: ${pkg}"
     else
       warn "${pkg} ディレクトリが見つかりません — スキップします"
