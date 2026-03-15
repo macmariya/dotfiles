@@ -218,7 +218,23 @@ defaults write NSGlobalDomain com.apple.trackpad.scaling -float 2.0
 # 無効にする場合:
 # defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
 
+# 3本指ドラッグを有効化（アクセシビリティ設定）
+defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
+
 success "トラックパッド設定を適用しました"
+
+# =============================================================================
+# 6.5 デフォルトブラウザ設定
+# =============================================================================
+info "デフォルトブラウザを設定中..."
+
+if command -v defaultbrowser &>/dev/null; then
+  defaultbrowser chrome
+  success "デフォルトブラウザを Google Chrome に設定しました"
+else
+  warn "defaultbrowser コマンドが見つかりません — デフォルトブラウザ設定をスキップします"
+fi
 
 # =============================================================================
 # 7. サウンド設定
