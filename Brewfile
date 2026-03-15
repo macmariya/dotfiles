@@ -108,5 +108,5 @@ cask "qlmarkdown"
 # -------------------------------------------------------------------
 # 追加推奨: フォント
 # -------------------------------------------------------------------
-cask "font-hackgen-console-nerd-font"   # HackGen Console Nerd Font
+cask "font-hackgen-nerd"               # HackGen Nerd Font
 cask "font-udev-gothic-nf"             # UDev Gothic Nerd Font
