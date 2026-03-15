@@ -186,7 +186,7 @@ success "Dock 設定を適用しました"
 # =============================================================================
 info "スクリーンショット設定を適用中..."
 
-# 保存先を ~/Pictures/Screenshots に変更
+# 保存先を ~/Documents/Screenshots に変更
 defaults write com.apple.screencapture location -string "$SCREENSHOT_DIR"
 
 # ウィンドウの影を除去してスクリーンショット
