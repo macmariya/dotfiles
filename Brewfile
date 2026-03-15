@@ -102,7 +102,7 @@ cask "iterm2"
 cask "raycast"
 cask "cmux"
 cask "codex"
-cask "gemini"
+cask "cursor"
 cask "qlmarkdown"
 
 # -------------------------------------------------------------------
