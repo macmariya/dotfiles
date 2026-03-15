@@ -23,8 +23,7 @@ install:
 update:
 	@echo "\033[1;36m==> Homebrew アップデート\033[0m"
 	brew update
-	brew bundle --file=$(DOTFILES)/Brewfile --no-lock
-	brew upgrade
+	brew bundle --file=$(DOTFILES)/Brewfile	brew upgrade
 	@echo "\033[1;36m==> シンボリックリンク再作成\033[0m"
 	$(MAKE) stow
 	@echo "\033[0;32m[OK] アップデートが完了しました\033[0m"
@@ -59,8 +58,7 @@ unstow:
 ## brew: Brewfile を適用してパッケージをインストールする
 brew:
 	@echo "\033[1;36m==> Brewfile 適用\033[0m"
-	brew bundle --file=$(DOTFILES)/Brewfile --no-lock
-	@echo "\033[0;32m[OK] Brewfile の適用が完了しました\033[0m"
+	brew bundle --file=$(DOTFILES)/Brewfile	@echo "\033[0;32m[OK] Brewfile の適用が完了しました\033[0m"
 
 ## brew-dump: 現在インストール済みのパッケージを Brewfile に書き出す
 brew-dump:
