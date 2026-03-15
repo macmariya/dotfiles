@@ -74,8 +74,12 @@ phase 3 "Brewfile パッケージインストール"
 BREWFILE="${DOTFILES}/Brewfile"
 if [[ -f "$BREWFILE" ]]; then
   info "brew bundle を実行します: ${BREWFILE}"
-  brew bundle --file="$BREWFILE"
-  success "Brewfile のインストールが完了しました"
+  if brew bundle --file="$BREWFILE"; then
+    success "Brewfile のインストールが完了しました"
+  else
+    warn "一部のパッケージのインストールに失敗しました（起動中のアプリ等が原因の場合があります）"
+    warn "失敗したパッケージは後で 'make brew' で再試行できます"
+  fi
 else
   warn "Brewfile が見つかりません: ${BREWFILE} — スキップします"
 fi
