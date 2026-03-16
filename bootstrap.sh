@@ -93,9 +93,12 @@ if [[ -d "$OMZ_DIR" ]]; then
   success "Oh My Zsh は既にインストール済みです"
 else
   info "Oh My Zsh をインストールします（unattended モード）..."
-  RUNZSH=no CHSH=no \
+  RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
     "" --unattended
+  # KEEP_ZSHRC=yes でも既存 .zshrc がない場合はテンプレートが生成されるため、
+  # Phase 6 の stow --adopt でリポジトリ側が上書きされるのを防ぐ
+  [[ -f "${HOME}/.zshrc" && ! -L "${HOME}/.zshrc" ]] && rm -f "${HOME}/.zshrc"
   success "Oh My Zsh のインストールが完了しました"
 fi
 
