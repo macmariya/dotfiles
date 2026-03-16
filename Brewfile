@@ -59,11 +59,6 @@ brew "luajit"
 brew "gnupg"
 
 # -------------------------------------------------------------------
-# ネットワーク / VPN
-# -------------------------------------------------------------------
-brew "tailscale"
-
-# -------------------------------------------------------------------
 # パーサ
 # -------------------------------------------------------------------
 brew "tree-sitter@0.25"
@@ -107,10 +102,15 @@ cask "ghostty"
 cask "iterm2"
 cask "raycast"
 cask "cmux"
+cask "cheatsheet"
+cask "claude"
 cask "codex"
 cask "cursor"
+cask "discord"
+cask "obsidian"
 cask "orbstack"            # 軽量 Docker 互換環境（Docker Desktop 代替）
 cask "qlmarkdown"
+cask "tailscale"           # VPN / ゼロコンフィグメッシュネットワーク
 
 # -------------------------------------------------------------------
 # 追加推奨: フォント
