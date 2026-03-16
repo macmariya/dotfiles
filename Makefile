@@ -38,7 +38,7 @@ stow:
 			stow $(STOW_FLAGS) $$pkg; \
 		else \
 			echo "\033[0;33m[WARN] $$pkg ディレクトリが見つかりません — スキップ\033[0m"; \
-		fi \
+		fi; \
 	done
 	@echo "\033[0;32m[OK] stow が完了しました\033[0m"
 	@$(MAKE) ssh-fix
@@ -52,7 +52,7 @@ unstow:
 			stow --delete --target=$(HOME) --dir=$(DOTFILES) $$pkg; \
 		else \
 			echo "\033[0;33m[WARN] $$pkg ディレクトリが見つかりません — スキップ\033[0m"; \
-		fi \
+		fi; \
 	done
 	@echo "\033[0;32m[OK] unstow が完了しました\033[0m"
 
