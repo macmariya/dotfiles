@@ -236,7 +236,7 @@ if command -v claude &>/dev/null; then
   success "Claude Code は既にインストール済みです: $(claude --version 2>/dev/null || echo 'installed')"
 else
   info "Claude Code をインストールします..."
-  curl -fsSL https://claude.ai/install.sh | sh
+  curl -fsSL https://claude.ai/install.sh | bash
   success "Claude Code のインストールが完了しました"
   info "初回起動時にブラウザでサブスクリプション認証を行ってください:"
   info "  claude"
