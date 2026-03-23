@@ -2,10 +2,10 @@
 # 使用方法: make help
 
 SHELL := /bin/zsh
-DOTFILES := $(shell pwd)
+DOTFILES := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 # GNU Stow で管理するパッケージ一覧
-STOW_PACKAGES := zsh git tmux nvim ghostty bin ssh
+STOW_PACKAGES := zsh git tmux nvim ghostty ssh
 
 # stow コマンドの共通オプション
 STOW_FLAGS := --restow --target=$(HOME) --dir=$(DOTFILES)
@@ -24,7 +24,6 @@ update:
 	@echo "\033[1;36m==> Homebrew アップデート\033[0m"
 	brew update
 	brew bundle --file=$(DOTFILES)/Brewfile
-	brew upgrade
 	@echo "\033[1;36m==> シンボリックリンク再作成\033[0m"
 	$(MAKE) stow
 	@echo "\033[0;32m[OK] アップデートが完了しました\033[0m"

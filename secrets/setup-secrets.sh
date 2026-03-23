@@ -24,6 +24,7 @@ _save_to_keychain() {
     -s "$service" \
     -a "$account" \
     -l "$label" \
+    -T "" \
     -w "$password"
 }
 
@@ -56,11 +57,12 @@ else
   success "GitHub PAT を Keychain に登録しました"
   info "  Service : github-pat"
   info "  Account : ${USER}"
-  # 確認: パスワードを取得してマスク表示
+  # 確認: Keychain から取得できることを検証
   _stored=$(security find-generic-password -s "github-pat" -a "${USER}" -w 2>/dev/null || echo "")
   if [[ -n "$_stored" ]]; then
-    success "登録確認: 先頭4文字 = ${_stored:0:4}****"
+    success "登録確認: ${#_stored} 文字のトークンを検出"
   fi
+  unset _stored
 fi
 
 printf "\n"
@@ -86,5 +88,6 @@ printf "\033[1;32m  シークレット登録が完了しました\033[0m\n"
 printf "\033[1;32m============================================\033[0m\n\n"
 info "登録済みシークレットの確認コマンド:"
 printf "  security find-generic-password -s github-pat -a %s -w\n\n" "${USER}"
-info "Keychain からシークレットを取得するには (zsh 設定例):"
-printf "  export GITHUB_TOKEN=\$(security find-generic-password -s github-pat -a %s -w)\n\n" "${USER}"
+info "Keychain からシークレットを取得するには (zsh 関数方式 — exports.zsh に定義済み):"
+printf "  github-pat  # → トークンを標準出力に返す\n"
+printf "  GITHUB_TOKEN=\$(github-pat) gh api /user  # 一時的に使用する例\n\n"

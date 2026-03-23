@@ -1,48 +1,43 @@
 # path.zsh - PATH構成とツール初期化
-# pyenv, nvm（遅延ロード）, rbenv, Codex CLI の設定
+# pyenv, rbenv, nvm は遅延ロードでシェル起動を高速化
 
-# --- pyenv ---
+# --- pyenv（遅延ロード）---
 export PYENV_ROOT="$HOME/.pyenv"
-[[ -d "$PYENV_ROOT" ]] && {
-  export PATH="$PYENV_ROOT/shims:$PATH"
-  eval "$(pyenv init -)"
-}
+if [[ -d "$PYENV_ROOT" ]]; then
+  path=("$PYENV_ROOT/shims" $path)
+  pyenv() { unfunction pyenv; eval "$(command pyenv init -)"; pyenv "$@"; }
+fi
 
-# --- rbenv ---
-[[ -d "$HOME/.rbenv" ]] && {
-  export PATH="$HOME/.rbenv/shims:$PATH"
-  eval "$(rbenv init - zsh)"
-}
+# --- rbenv（遅延ロード）---
+if [[ -d "$HOME/.rbenv" ]]; then
+  path=("$HOME/.rbenv/shims" $path)
+  rbenv() { unfunction rbenv; eval "$(command rbenv init - zsh)"; rbenv "$@"; }
+fi
 
 # --- nvm（遅延ロード）---
-# シェル起動を高速化するため、nvm/node/npm/npx の初回呼び出し時にロード
 export NVM_DIR="$HOME/.nvm"
 
 if [[ -d "$NVM_DIR" ]]; then
-  # nvm関連コマンドのスタブを定義
   _nvm_lazy_cmds=(nvm node npm npx)
 
   _nvm_lazy_load() {
-    # スタブ関数を削除
     for cmd in "${_nvm_lazy_cmds[@]}"; do
       unfunction "$cmd" 2>/dev/null
     done
     unset _nvm_lazy_cmds
-
-    # nvmを実際にロード
     [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
-    [[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
   }
 
   for _cmd in "${_nvm_lazy_cmds[@]}"; do
-    eval "${_cmd}() { _nvm_lazy_load; ${_cmd} \"\$@\"; }"
+    functions[$_cmd]="_nvm_lazy_load; command ${_cmd} \"\$@\""
   done
   unset _cmd
 fi
 
 # --- Codex CLI ---
-export CODEX="$HOME/.codex"
-[[ -f "$CODEX/completion-zsh.sh" ]] && source "$CODEX/completion-zsh.sh"
+_codex_dir="$HOME/.codex"
+[[ -f "$_codex_dir/completion-zsh.sh" ]] && source "$_codex_dir/completion-zsh.sh"
+unset _codex_dir
 
 # --- 追加PATH ---
 path=(

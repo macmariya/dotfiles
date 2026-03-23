@@ -7,7 +7,6 @@ export LANG=en_US.UTF-8
 export LC_TIME=ja_JP.UTF-8
 export LC_MONETARY=ja_JP.UTF-8
 export LC_NUMERIC=ja_JP.UTF-8
-export LESSCHARSET=utf-8
 
 # --- エディタ ---
 export EDITOR="nvim"

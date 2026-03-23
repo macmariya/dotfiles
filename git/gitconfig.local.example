@@ -1,0 +1,14 @@
+# ~/.gitconfig.local — マシン固有の Git 設定
+# このファイルを ~/.gitconfig.local にコピーして編集してください
+# cp gitconfig.local.example ~/.gitconfig.local
+
+[user]
+	name = yourname
+	email = yourname@example.com
+	# signingkey = ~/.ssh/id_ed25519.pub
+
+# [commit]
+# 	gpgsign = true
+
+# [gpg]
+# 	format = ssh

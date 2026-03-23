@@ -19,8 +19,9 @@ Thumbs.db
 # 秘密鍵・証明書
 *.pem
 *.key
-id_rsa
-id_ed25519
+id_rsa*
+id_ed25519*
+id_ecdsa*
 
 # Python
 __pycache__/

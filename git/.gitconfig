@@ -26,10 +26,11 @@
 
 [push]
 	autoSetupRemote = true
-	default = current
 
 [fetch]
 	prune = true
+	pruneTags = true
+	fsckObjects = true
 
 [diff]
 	algorithm = histogram
@@ -57,6 +58,8 @@
 [alias]
 	st = status
 	co = checkout
+	sw = switch
+	rs = restore
 	br = branch
 	lg = log --oneline --graph --decorate
 

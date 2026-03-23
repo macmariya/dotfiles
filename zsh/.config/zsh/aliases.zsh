@@ -3,7 +3,7 @@
 
 # --- dotfiles管理 ---
 alias dots='cd ~/dev/dotfiles'
-alias reload='source ~/.zshrc && echo "zshrc reloaded"'
+alias reload='exec zsh'
 
 # --- エディタ ---
 alias v='nvim'
@@ -34,7 +34,7 @@ alias d='docker'
 alias dc='docker compose'
 alias dps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
 alias dimg='docker images'
-alias dprune='docker system prune -af'
+alias dprune='docker system prune -a'
 
 # --- 安全策 ---
 alias rm='rm -i'
@@ -44,4 +44,4 @@ alias mv='mv -i'
 # --- ユーティリティ ---
 alias path='echo $PATH | tr ":" "\n"'
 alias brewup='brew update && brew upgrade && brew cleanup'
-alias ip='curl -s https://ifconfig.me'
+alias myip='curl -s https://ifconfig.me'

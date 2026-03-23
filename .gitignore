@@ -1,6 +1,4 @@
-# Secrets（setup-secrets.sh は追跡可能にする）
-secrets/*.local
-secrets/.env*
+# Secrets
 *.local
 !bin/.local
 .env*
@@ -20,6 +18,10 @@ secrets/.env*
 # SSH ホスト固有設定（config.d/ 内のファイル）
 ssh/.ssh/config.d/*
 !ssh/.ssh/config.d/.gitkeep
+
+# SSH ソケット（ControlMaster 用ランタイムファイル）
+ssh/.ssh/sockets/*
+!ssh/.ssh/sockets/.gitkeep
 
 # SSH / GPG 鍵（誤コミット防止）
 *.pem

@@ -240,7 +240,7 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeF
 success "トラックパッド設定を適用しました"
 
 # =============================================================================
-# 6.5 デフォルトブラウザ設定
+# 7. デフォルトブラウザ設定
 # =============================================================================
 info "デフォルトブラウザを設定中..."
 
@@ -252,33 +252,34 @@ else
 fi
 
 # =============================================================================
-# 7. サウンド設定
+# 8. サウンド設定
 # =============================================================================
 info "サウンド設定を適用中..."
 
 # インターフェース操作音を無効化（ゴミ箱を空にするときの音等）
 defaults write com.apple.systemsound "com.apple.sound.uiaudio.enabled" -int 0
 
-# 起動音を無効化
-sudo nvram SystemAudioVolume=" " 2>/dev/null || warn "起動音の設定はスキップしました（権限不足の可能性）"
+# 起動音を無効化（Apple Silicon 対応）
+sudo nvram StartupMute=%01 2>/dev/null || warn "起動音の設定はスキップしました（権限不足の可能性）"
 
 success "サウンド設定を適用しました"
 
 # =============================================================================
-# 8. メニューバー設定
+# 9. メニューバー設定
 # =============================================================================
 info "メニューバー設定を適用中..."
 
 # 時計のフォーマット（24時間表示）
 defaults write com.apple.menuextra.clock DateFormat -string "EEE M/d H:mm"
 
-# バッテリーの残量をパーセントで表示
-defaults write com.apple.menuextra.battery ShowPercent -string "YES"
+# バッテリーの残量をパーセントで表示（macOS Ventura+ 対応）
+defaults write com.apple.controlcenter "NSStatusItem Visible Battery" -bool true
+defaults -currentHost write com.apple.controlcenter BatteryShowPercentage -bool true
 
 success "メニューバー設定を適用しました"
 
 # =============================================================================
-# 9. セキュリティ・プライバシー設定
+# 10. セキュリティ・プライバシー設定
 # =============================================================================
 info "セキュリティ設定を適用中..."
 
@@ -293,7 +294,7 @@ sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on 2>/dev/
 success "セキュリティ設定を適用しました"
 
 # =============================================================================
-# 10. 変更を反映（プロセス再起動）
+# 11. 変更を反映（プロセス再起動）
 # =============================================================================
 info "Finder と Dock を再起動して設定を反映中..."
 

@@ -8,7 +8,7 @@ set -euo pipefail
 # ---------------------------------------------------------------------------
 # スクリプト自身の絶対パスから dotfiles ルートを自動検出
 DOTFILES="${0:A:h}"
-STOW_PACKAGES=(zsh git tmux nvim ghostty bin ssh)
+STOW_PACKAGES=(zsh git tmux nvim ghostty ssh)
 OMZ_DIR="${HOME}/.oh-my-zsh"
 OMZ_CUSTOM="${OMZ_DIR}/custom/plugins"
 
@@ -55,6 +55,8 @@ phase 2 "Homebrew"
 
 if command -v brew &>/dev/null; then
   success "Homebrew は既にインストール済みです: $(brew --version | head -1)"
+  # PATH に brew が無い環境向けに shellenv を確実にロード
+  [[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 else
   info "Homebrew をインストールします..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -114,7 +116,11 @@ _install_omz_plugin() {
     success "${name} は既にインストール済みです"
   else
     info "${name} をインストールします..."
-    git clone --depth=1 "$repo" "$dest"
+    if ! git clone --depth=1 "$repo" "$dest"; then
+      rm -rf "$dest"
+      error "${name} のクローンに失敗しました"
+      return 1
+    fi
     success "${name} のインストールが完了しました"
   fi
 }
@@ -133,6 +139,9 @@ phase 6 "GNU Stow シンボリックリンク"
 if ! command -v stow &>/dev/null; then
   warn "stow コマンドが見つかりません — Phase 3 が正常に完了しているか確認してください"
 else
+  # ~/.local/bin はスクリプト用ディレクトリ（stow ではなく直接作成）
+  mkdir -p "${HOME}/.local/bin"
+
   for pkg in "${STOW_PACKAGES[@]}"; do
     pkg_dir="${DOTFILES}/${pkg}"
     if [[ -d "$pkg_dir" ]]; then
@@ -140,7 +149,7 @@ else
       # --restow で既存リンクを更新、--target でホームディレクトリを明示
       # --adopt で既存ファイルをリポジトリに取り込みリンクに置き換える
       if ! stow --restow --target="${HOME}" --dir="${DOTFILES}" "$pkg" 2>/dev/null; then
-        warn "${pkg}: 既存ファイルとの競合を検出 — --adopt で取り込みます"
+        warn "${pkg}: 既存ファイルとの競合を検出 — --adopt で取り込みます（git status で差分を確認してください）"
         stow --adopt --target="${HOME}" --dir="${DOTFILES}" "$pkg"
         # adopt 後に restow でリポジトリ側の内容を正とする
         stow --restow --target="${HOME}" --dir="${DOTFILES}" "$pkg"
@@ -162,6 +171,8 @@ if [[ -d "${HOME}/.ssh" ]]; then
   chmod 700 "${HOME}/.ssh"
   chmod 600 "${HOME}/.ssh/config" 2>/dev/null || true
   chmod 700 "${HOME}/.ssh/config.d" 2>/dev/null || true
+  chmod 600 "${HOME}/.ssh/config.d"/* 2>/dev/null || true
+  mkdir -p "${HOME}/.ssh/sockets" && chmod 700 "${HOME}/.ssh/sockets"
   success "SSH ディレクトリのパーミッションを修正しました"
 fi
 
@@ -171,8 +182,12 @@ if [[ -f "$SSH_KEY" ]]; then
   success "SSH 鍵は既に存在します: ${SSH_KEY}"
 else
   warn "SSH 鍵が見つかりません: ${SSH_KEY}"
-  printf "\n%b SSH Ed25519 鍵を生成しますか？ (y/N): %b" "\033[1;33m" "\033[0m"
-  read -r _reply
+  if [[ -t 0 ]]; then
+    printf "\n%b SSH Ed25519 鍵を生成しますか？ (y/N): %b" "\033[1;33m" "\033[0m"
+    read -r _reply
+  else
+    _reply="N"
+  fi
   if [[ "${_reply}" =~ ^[Yy]$ ]]; then
     printf "メールアドレスを入力してください: "
     read -r _email
@@ -219,8 +234,12 @@ MACOS_SCRIPT="${DOTFILES}/macos.sh"
 if [[ ! -f "$MACOS_SCRIPT" ]]; then
   warn "macos.sh が見つかりません — スキップします"
 else
-  printf "\n%b macOS のシステム設定を適用しますか？ (y/N): %b" "\033[1;33m" "\033[0m"
-  read -r _reply
+  if [[ -t 0 ]]; then
+    printf "\n%b macOS のシステム設定を適用しますか？ (y/N): %b" "\033[1;33m" "\033[0m"
+    read -r _reply
+  else
+    _reply="N"
+  fi
   if [[ "${_reply}" =~ ^[Yy]$ ]]; then
     info "macos.sh を実行します..."
     zsh "$MACOS_SCRIPT"
