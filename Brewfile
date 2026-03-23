@@ -111,5 +111,5 @@ cask "tailscale"           # VPN / ゼロコンフィグメッシュネットワ
 # -------------------------------------------------------------------
 # 追加推奨: フォント
 # -------------------------------------------------------------------
-cask "font-hackgen-console-nf"         # HackGen Console NF（Ghostty で使用）
+cask "font-hackgen-nerd"               # HackGen Nerd Font（HackGen Console NF を含む）
 cask "font-udev-gothic-nf"             # UDev Gothic Nerd Font
