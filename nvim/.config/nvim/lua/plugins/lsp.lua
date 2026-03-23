@@ -102,6 +102,9 @@ return {
       })
 
       -- ── Mason-LSPConfig: 自動インストール & セットアップ
+      -- ── 各 LSP サーバーの個別設定 ────────────────────
+      local lspconfig = require("lspconfig")
+
       require("mason-lspconfig").setup({
         ensure_installed = {
           "lua_ls",     -- Lua
@@ -114,62 +117,58 @@ return {
           "cssls",      -- CSS
         },
         automatic_installation = false,
-      })
+        -- ↓ 旧 setup_handlers() の中身をここに移動
+        handlers = {
+          -- デフォルトハンドラ: 特別な設定なしで起動
+          function(server_name)
+            lspconfig[server_name].setup({
+              capabilities = capabilities,
+            })
+          end,
 
-      -- ── 各 LSP サーバーの個別設定 ────────────────────
-      local lspconfig = require("lspconfig")
-
-      -- Mason で管理される LSP サーバーを自動セットアップ
-      require("mason-lspconfig").setup_handlers({
-        -- デフォルトハンドラ: 特別な設定なしで起動
-        function(server_name)
-          lspconfig[server_name].setup({
-            capabilities = capabilities,
-          })
-        end,
-
-        -- lua_ls: Neovim Lua 開発用の特別設定
-        ["lua_ls"] = function()
-          lspconfig.lua_ls.setup({
-            capabilities = capabilities,
-            settings = {
-              Lua = {
-                runtime = {
-                  version = "LuaJIT", -- Neovim は LuaJIT を使用
-                },
-                diagnostics = {
-                  globals = { "vim" }, -- vim グローバル変数を認識
-                },
-                workspace = {
-                  -- Neovim ランタイムファイルを認識
-                  library = {
-                    vim.env.VIMRUNTIME,
-                    vim.fn.stdpath("config") .. "/lua",
+          -- lua_ls: Neovim Lua 開発用の特別設定
+          ["lua_ls"] = function()
+            lspconfig.lua_ls.setup({
+              capabilities = capabilities,
+              settings = {
+                Lua = {
+                  runtime = {
+                    version = "LuaJIT", -- Neovim は LuaJIT を使用
                   },
-                  checkThirdParty = false,
-                },
-                telemetry = {
-                  enable = false, -- テレメトリを無効化
-                },
-                completion = {
-                  callSnippet = "Replace",
+                  diagnostics = {
+                    globals = { "vim" }, -- vim グローバル変数を認識
+                  },
+                  workspace = {
+                    -- Neovim ランタイムファイルを認識
+                    library = {
+                      vim.env.VIMRUNTIME,
+                      vim.fn.stdpath("config") .. "/lua",
+                    },
+                    checkThirdParty = false,
+                  },
+                  telemetry = {
+                    enable = false, -- テレメトリを無効化
+                  },
+                  completion = {
+                    callSnippet = "Replace",
+                  },
                 },
               },
-            },
-          })
-        end,
+            })
+          end,
 
-        -- jsonls: スキーマ補完を有効化
-        ["jsonls"] = function()
-          lspconfig.jsonls.setup({
-            capabilities = capabilities,
-            settings = {
-              json = {
-                validate = { enable = true },
+          -- jsonls: スキーマ補完を有効化
+          ["jsonls"] = function()
+            lspconfig.jsonls.setup({
+              capabilities = capabilities,
+              settings = {
+                json = {
+                  validate = { enable = true },
+                },
               },
-            },
-          })
-        end,
+            })
+          end,
+        },
       })
     end,
   },

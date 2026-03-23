@@ -7,10 +7,11 @@ return {
   event = "VeryLazy",
   dependencies = {
     "nvim-tree/nvim-web-devicons",
+    "catppuccin/nvim",              -- テーマを先に読み込む
   },
   opts = {
     options = {
-      theme = "catppuccin",           -- Catppuccin テーマと連携
+      theme = "auto",                  -- カラースキームから自動検出
       globalstatus = true,             -- グローバルステータスライン
       component_separators = { left = "", right = "" },
       section_separators = { left = "", right = "" },
@@ -78,5 +79,5 @@ return {
       lualine_z = {},
     },
     extensions = { "neo-tree", "lazy" },
-  },
+  }
 }

@@ -44,8 +44,5 @@ return {
         node_decremental = "<bs>",       -- ノード単位で選択縮小
       },
     },
-  },
-  config = function(_, opts)
-    require("nvim-treesitter.configs").setup(opts)
-  end,
+  }
 }
