@@ -3,6 +3,8 @@
 -- ==========================================================
 
 return {
+  -- NOTE: Neovim 0.10+ は gc/gb をビルトイン対応。
+  -- <leader>/ のカスタムバインドが不要になれば本プラグインは削除可。
   "numToStr/Comment.nvim",
   event = { "BufReadPre", "BufNewFile" },
   keys = {
@@ -22,12 +24,5 @@ return {
       mode = "v",
     },
   },
-  opts = {
-    -- gcc: 行コメントトグル（デフォルト）
-    -- gbc: ブロックコメントトグル（デフォルト）
-    -- gc: ビジュアルモードでコメントトグル（デフォルト）
-
-    -- Treesitter と連携してコメント文字列を自動判定
-    pre_hook = nil, -- ts-context-commentstring を使う場合はここで設定
-  },
+  opts = {},
 }

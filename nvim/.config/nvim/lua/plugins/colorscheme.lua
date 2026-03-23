@@ -24,7 +24,7 @@ return {
       gitsigns = true,
       treesitter = true,
       telescope = { enabled = true },
-      indent_blankline = { enabled = true },
+      indent_blankline = { enabled = true, scope_color = "lavender" },
       native_lsp = {
         enabled = true,
         underlines = {

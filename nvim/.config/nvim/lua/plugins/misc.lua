@@ -32,10 +32,14 @@ return {
     config = function(_, opts)
       require("illuminate").configure(opts)
 
-      -- ハイライトグループの色をカスタマイズ
-      vim.api.nvim_set_hl(0, "IlluminatedWordText", { underline = true })
-      vim.api.nvim_set_hl(0, "IlluminatedWordRead", { underline = true })
-      vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { underline = true })
+      -- ハイライトグループの色をカスタマイズ（カラースキーム変更時にも維持）
+      local function set_illuminate_hl()
+        vim.api.nvim_set_hl(0, "IlluminatedWordText", { underline = true })
+        vim.api.nvim_set_hl(0, "IlluminatedWordRead", { underline = true })
+        vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { underline = true })
+      end
+      set_illuminate_hl()
+      vim.api.nvim_create_autocmd("ColorScheme", { callback = set_illuminate_hl })
     end,
   },
 
@@ -44,17 +48,10 @@ return {
     "folke/todo-comments.nvim",
     event = { "BufReadPost", "BufNewFile" },
     dependencies = { "nvim-lua/plenary.nvim" },
+    -- keys はキーバインド登録用（event でハイライト用に早期ロード済み）
     keys = {
-      {
-        "]t",
-        function() require("todo-comments").jump_next() end,
-        desc = "次の TODO コメントへ",
-      },
-      {
-        "[t",
-        function() require("todo-comments").jump_prev() end,
-        desc = "前の TODO コメントへ",
-      },
+      { "]t", function() require("todo-comments").jump_next() end, desc = "次の TODO コメントへ" },
+      { "[t", function() require("todo-comments").jump_prev() end, desc = "前の TODO コメントへ" },
       { "<leader>ft", "<cmd>TodoTelescope<cr>", desc = "TODO 一覧 (Telescope)" },
     },
     opts = {

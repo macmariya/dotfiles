@@ -15,6 +15,14 @@ return {
       changedelete = { text = "~" },
       untracked = { text = "┆" },
     },
+    -- ステージ済み hunk のシンボル（gitsigns 0.9+）
+    signs_staged = {
+      add = { text = "│" },
+      change = { text = "│" },
+      delete = { text = "━" },
+      topdelete = { text = "‾" },
+      changedelete = { text = "~" },
+    },
     -- 行単位の blame 表示（デフォルトはオフ、必要に応じて有効化）
     current_line_blame = false,
     current_line_blame_opts = {
@@ -25,7 +33,7 @@ return {
     current_line_blame_formatter = "<author>, <author_time:%Y-%m-%d> - <summary>",
     -- キーマップ設定
     on_attach = function(bufnr)
-      local gs = package.loaded.gitsigns
+      local gs = require("gitsigns")
       local map = function(mode, l, r, desc, opts)
         opts = vim.tbl_extend("force", { buffer = bufnr, desc = desc }, opts or {})
         vim.keymap.set(mode, l, r, opts)

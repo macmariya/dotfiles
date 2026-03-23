@@ -7,6 +7,7 @@ return {
   event = "InsertEnter",
   dependencies = {
     "hrsh7th/nvim-cmp",
+    "nvim-treesitter/nvim-treesitter", -- check_ts = true に必要
   },
   config = function()
     local autopairs = require("nvim-autopairs")
