@@ -16,6 +16,7 @@ make brew          # Brewfile 適用
 make brew-dump     # 現在のパッケージを Brewfile に書き出し
 make macos         # macOS システム設定適用
 make ssh-fix       # ~/.ssh パーミッション修正
+make clean         # 壊れたシンボリックリンク検出
 make install       # bootstrap.sh 実行（全 10 フェーズ）
 ```
 
@@ -40,6 +41,15 @@ make install       # bootstrap.sh 実行（全 10 フェーズ）
 ### bootstrap.sh のフェーズ設計
 
 全フェーズが冪等（`command -v` や `-d` チェックで既存をスキップ）。新フェーズ追加時は同じパターンを踏襲すること。
+
+### zsh モジュール構成
+
+`.zshrc` は以下の順序でモジュールをロードする: `exports` → `path` → `aliases` → `completion` → `functions` → `local.zsh`。シェル起動目標は 0.36s 以内。nvm/pyenv/rbenv は遅延ロード済みのため、`eval "$(xxx init)"` を追加しないこと。
+
+### 環境
+
+- Homebrew prefix: `/opt/homebrew`（Apple Silicon 専用パス）
+- Git: `pull.rebase = true`（マージコミットは使わない）
 
 ## 変更時の注意
 
