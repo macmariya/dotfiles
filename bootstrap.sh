@@ -254,8 +254,8 @@ fi
 # ---------------------------------------------------------------------------
 phase 10 "Claude Code"
 
-if command -v claude &>/dev/null; then
-  success "Claude Code は既にインストール済みです: $(claude --version 2>/dev/null || echo 'installed')"
+if [[ -x "$HOME/.claude/bin/claude" ]]; then
+  success "Claude Code (CLI) は既にインストール済みです: $("$HOME/.claude/bin/claude" --version 2>/dev/null || echo 'installed')"
 else
   info "Claude Code をインストールします..."
   curl -fsSL https://claude.ai/install.sh | bash
