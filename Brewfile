@@ -106,7 +106,7 @@ cask "discord"
 cask "obsidian"
 cask "orbstack"            # 軽量 Docker 互換環境（Docker Desktop 代替）
 cask "qlmarkdown"
-cask "tailscale"           # VPN / ゼロコンフィグメッシュネットワーク
+cask "tailscale-app"       # VPN / ゼロコンフィグメッシュネットワーク
 
 # -------------------------------------------------------------------
 # 追加推奨: フォント
