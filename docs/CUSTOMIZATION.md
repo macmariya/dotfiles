@@ -33,6 +33,10 @@ ls -la ~/.config/starship.toml
 `.stow-packages` ファイルにパッケージ名を追加すると、
 `make stow` および `bootstrap.sh` の両方に自動で反映されます。
 
+> **tree folding 防止:** ツールが自動生成ファイルを書き込むディレクトリ（例: `~/.config/newpkg/`）がある場合、
+> Makefile の `UNFOLD_DIRS` と bootstrap.sh の `mkdir -p` にそのパスを追加してください。
+> これにより stow がディレクトリ単位ではなくファイル単位でリンクを作成し、管理外ファイルとの共存が可能になります。
+
 ```zsh
 # .stow-packages を編集（スペース区切りの1行）
 # 変更前
@@ -78,6 +82,11 @@ cp ~/dev/dotfiles/zsh/.config/zsh/local.zsh.example \
 
 > **注意:** `local.zsh` は `.gitignore` で除外されています。
 > このファイルに書いた内容は Git にコミットされません。
+
+> **ヒント:** `bootstrap.sh` は既存の `~/.zshrc` が実ファイルとして存在する場合、
+> その内容を自動的に `local.zsh` に救出します。
+> 救出された `local.zsh` には元の `.zshrc` の全内容がコピーされるため、
+> 不要な行（Oh My Zsh の初期設定など）は手動で削除してください。
 
 `local.zsh` の記述例。
 

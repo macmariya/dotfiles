@@ -26,6 +26,14 @@ make install       # bootstrap.sh 実行（全 10 フェーズ）
 
 各ディレクトリが `$HOME` へのシンボリックリンク元。`STOW_PACKAGES` は `.stow-packages` ファイルで一元管理されており、パッケージ追加時はこのファイルのみ更新すればよい。
 
+### Stow の競合解決と tree folding 防止
+
+`make stow` / `bootstrap.sh` ともに、既存の実ファイルとの競合時は `--adopt → git checkout → --restow` の3段階で安全に解決する。adopt でリポジトリ側が一時的にローカル版で上書きされるが、直後の `git checkout` でリポジトリの正しい内容に復元される。
+
+tree folding（ディレクトリ単位のシンボリックリンク）を防止するため、`UNFOLD_DIRS`（Makefile）/ `mkdir -p`（bootstrap.sh）で `~/.config/zsh` と `~/.config/nvim` を事前に実ディレクトリとして作成する。これにより `local.zsh` やツール自動生成ファイルとの共存が可能。
+
+`bootstrap.sh` では stow 前に `_rescue_zsh_config()` が既存の `.zshrc` の内容を `~/.config/zsh/local.zsh` に救出し、バックアップを `.stow-backup/` に保存する。
+
 ### シークレット管理
 
 ファイルに残さず macOS Keychain に保存する方針。`exports.zsh` では環境変数への常駐を避け、関数方式 (`github-pat()`) で必要時のみ取得する。

@@ -74,7 +74,7 @@ make install
 | Phase 3 | `Brewfile` からパッケージを一括インストール |
 | Phase 4 | Oh My Zsh のインストール |
 | Phase 5 | Oh My Zsh カスタムプラグイン（syntax-highlighting, autosuggestions） |
-| Phase 6 | GNU Stow でシンボリックリンクを作成（zsh, git, tmux, nvim, ghostty, bin, ssh）。Neovim 設定も含む |
+| Phase 6 | GNU Stow でシンボリックリンクを作成。既存設定の自動救出・競合解決・tree folding 防止付き |
 | Phase 7 | SSH パーミッション修正 & Ed25519 鍵生成（対話式） |
 | Phase 8 | macOS Keychain にシークレットが登録済みかチェック |
 | Phase 9 | macOS システム設定の適用（対話形式で確認あり） |
@@ -367,7 +367,7 @@ reload                      # .zshrc を再読み込みする
 ls -la ~/.zshrc             # -> ~/dev/dotfiles/zsh/.zshrc
 ls -la ~/.gitconfig         # -> ~/dev/dotfiles/git/.gitconfig
 ls -la ~/.tmux.conf         # -> ~/dev/dotfiles/tmux/.tmux.conf
-ls -la ~/.config/nvim       # -> ~/dev/dotfiles/nvim/.config/nvim
+ls -la ~/.config/nvim/      # ディレクトリ内の各ファイルが個別にリンク
 ls -la ~/.ssh/config        # -> ~/dev/dotfiles/ssh/.ssh/config
 
 # Neovim プラグインがインストールされているか
@@ -383,23 +383,24 @@ brew doctor
 
 ### Stow の競合エラー
 
-既存のファイルが存在する場合、Stow はエラーを返します。
+`make stow` と `bootstrap.sh` は既存ファイルとの競合を自動解決します。
+競合が検出されると以下の処理が行われます。
 
-```
-WARNING! stowing zsh would cause conflicts
-```
+1. `stow --adopt` で既存ファイルをリポジトリに取り込みシンボリックリンクに置換
+2. `git checkout` でリポジトリ側のファイルを正しい内容に復元
+3. `stow --restow` でリンクを最終確定
 
-既存ファイルをバックアップしてから Stow を実行します。
+`bootstrap.sh` ではさらに、stow 前に既存の `.zshrc` の内容を `~/.config/zsh/local.zsh` に救出し、
+元のファイルを `.stow-backup/` にタイムスタンプ付きでバックアップします。
+
+手動で競合を確認したい場合:
 
 ```zsh
-# 競合しているファイルを確認
+# 競合をシミュレーション（実際の変更なし）
 stow --simulate --restow --target=$HOME --dir=~/dev/dotfiles zsh
 
-# 既存ファイルをバックアップ
-mv ~/.zshrc ~/.zshrc.bak
-
-# Stow を再実行
-make stow
+# バックアップを確認
+ls .stow-backup/
 ```
 
 壊れたシンボリックリンクの確認と整理には `make clean` が使えます。

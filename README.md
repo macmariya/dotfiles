@@ -55,7 +55,7 @@ exec zsh
 | 3 | Brewfile からパッケージインストール |
 | 4 | Oh My Zsh |
 | 5 | Oh My Zsh カスタムプラグイン（syntax-highlighting, autosuggestions） |
-| 6 | GNU Stow でシンボリックリンク作成 |
+| 6 | GNU Stow でシンボリックリンク作成（既存設定の自動救出・競合解決付き） |
 | 7 | SSH 設定（Ed25519 デフォルト、パーミッション修正） |
 | 8 | シークレット設定チェック（Keychain） |
 | 9 | macOS システム設定（対話式、スキップ可） |
@@ -73,7 +73,7 @@ make help    # コマンド一覧を表示
 |---------|------|
 | `make install` | `bootstrap.sh` を実行して初期セットアップ |
 | `make update` | Homebrew 更新 + シンボリックリンク再作成 |
-| `make stow` | 全パッケージのシンボリックリンクを作成・更新 |
+| `make stow` | 全パッケージのシンボリックリンクを作成・更新（競合時は自動解決） |
 | `make unstow` | 全パッケージのシンボリックリンクを削除 |
 | `make brew` | Brewfile を適用してパッケージをインストール |
 | `make brew-dump` | 現在のパッケージ構成を Brewfile に書き出す |
@@ -214,10 +214,14 @@ git commit -m "Brewfile を更新"
 mkdir -p newpkg/.config/newpkg
 nvim newpkg/.config/newpkg/config
 
-# 2. Makefile の STOW_PACKAGES と bootstrap.sh の STOW_PACKAGES に追加
+# 2. .stow-packages にパッケージ名を追加（スペース区切り）
 # 3. リンク作成
-stow --restow --target=$HOME newpkg
+make stow
 ```
+
+### 既存マシンへの適用
+
+既に `.zshrc` 等が存在するマシンでも安全にセットアップできる。`bootstrap.sh` は既存の `.zshrc` の内容を `~/.config/zsh/local.zsh` に自動救出し、バックアップを `.stow-backup/` に保存してからリポジトリの設定でシンボリックリンクを作成する。`make stow` でも競合は自動解決される（adopt → git checkout → restow）。
 
 ## Neovim
 
