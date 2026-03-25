@@ -137,23 +137,80 @@ _install_omz_plugin "zsh-autosuggestions" \
 # ---------------------------------------------------------------------------
 phase 6 "GNU Stow シンボリックリンク"
 
+# _rescue_zsh_config: 既存の zsh 設定ファイルを local.zsh に救出
+# stow でリポジトリ側に置き換える前に、ユーザーのローカル設定を保全する
+_rescue_zsh_config() {
+  local local_zsh="${HOME}/.config/zsh/local.zsh"
+  local backup_dir="${DOTFILES}/.stow-backup/$(date +%Y%m%d_%H%M%S)"
+  local rescued=0
+
+  # 救出対象: ~/.zshrc, ~/.zprofile が実ファイル（シンボリックリンクでない）の場合
+  for f in .zshrc .zprofile; do
+    local target="${HOME}/${f}"
+    if [[ -f "$target" && ! -L "$target" ]]; then
+      mkdir -p "$backup_dir"
+      cp -p "$target" "${backup_dir}/${f}"
+      info "バックアップ: ${f} → ${backup_dir}/${f}"
+      rescued=1
+    fi
+  done
+
+  # ~/.config/zsh/ 以下の実ファイルもバックアップ
+  if [[ -d "${HOME}/.config/zsh" ]]; then
+    for f in "${HOME}/.config/zsh/"*.zsh; do
+      [[ -f "$f" && ! -L "$f" ]] || continue
+      local fname="${f:t}"
+      [[ "$fname" == "local.zsh" ]] && continue  # local.zsh はそのまま残す
+      mkdir -p "$backup_dir"
+      cp -p "$f" "${backup_dir}/${fname}"
+      info "バックアップ: .config/zsh/${fname} → ${backup_dir}/${fname}"
+      rescued=1
+    done
+  fi
+
+  # local.zsh が未作成で、既存の .zshrc に独自設定がある場合、local.zsh として救出
+  if [[ ! -f "$local_zsh" && -f "${HOME}/.zshrc" && ! -L "${HOME}/.zshrc" ]]; then
+    mkdir -p "${HOME}/.config/zsh"
+    {
+      echo "# local.zsh — 旧 .zshrc から救出されたローカル設定"
+      echo "# bootstrap.sh により $(date +%Y-%m-%d) に自動生成"
+      echo "# 不要な行は削除してください"
+      echo ""
+      cat "${HOME}/.zshrc"
+    } > "$local_zsh"
+    info "既存 .zshrc の内容を local.zsh に救出しました"
+  fi
+
+  if (( rescued )); then
+    info "バックアップ先: ${backup_dir}"
+  fi
+}
+
 if ! command -v stow &>/dev/null; then
   warn "stow コマンドが見つかりません — Phase 3 が正常に完了しているか確認してください"
 else
   # ~/.local/bin はスクリプト用ディレクトリ（stow ではなく直接作成）
   mkdir -p "${HOME}/.local/bin"
 
+  # zsh パッケージの stow 前に既存設定を救出
+  _rescue_zsh_config
+
+  # tree folding 防止: 事前にディレクトリを作成してファイル単位リンクにする
+  # → local.zsh やツール自動生成ファイルとの共存を容易にする
+  mkdir -p "${HOME}/.config/zsh" "${HOME}/.config/nvim"
+
+  _stow_flags=(--restow --target="${HOME}" --dir="${DOTFILES}")
+
   for pkg in "${STOW_PACKAGES[@]}"; do
     pkg_dir="${DOTFILES}/${pkg}"
     if [[ -d "$pkg_dir" ]]; then
       info "stow: ${pkg}"
-      # --restow で既存リンクを更新、--target でホームディレクトリを明示
-      # --adopt で既存ファイルをリポジトリに取り込みリンクに置き換える
-      if ! stow --restow --target="${HOME}" --dir="${DOTFILES}" "$pkg" 2>/dev/null; then
-        warn "${pkg}: 既存ファイルとの競合を検出 — --adopt で取り込みます（git status で差分を確認してください）"
+      if ! stow "${_stow_flags[@]}" "$pkg" 2>/dev/null; then
+        warn "${pkg}: 既存ファイルとの競合を検出 — adopt → git restore で解決します"
         stow --adopt --target="${HOME}" --dir="${DOTFILES}" "$pkg"
-        # adopt 後に restow でリポジトリ側の内容を正とする
-        stow --restow --target="${HOME}" --dir="${DOTFILES}" "$pkg"
+        # adopt でリポジトリに取り込まれた差分を元に戻す（リポジトリ側を正とする）
+        git -C "${DOTFILES}" checkout -- "$pkg"
+        stow "${_stow_flags[@]}" "$pkg"
       fi
       success "stow 完了: ${pkg}"
     else

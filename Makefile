@@ -10,6 +10,11 @@ STOW_PACKAGES := $(shell cat $(dir $(realpath $(lastword $(MAKEFILE_LIST)))).sto
 # stow コマンドの共通オプション
 STOW_FLAGS := --restow --target=$(HOME) --dir=$(DOTFILES)
 
+# tree folding 防止: 事前にディレクトリを作成しておくことで
+# stow がディレクトリ単位リンクではなくファイル単位リンクを作成するようにする
+# → local.zsh やツール自動生成ファイルとの共存を容易にする
+UNFOLD_DIRS := $(HOME)/.config/zsh $(HOME)/.config/nvim
+
 .PHONY: install update stow unstow brew brew-dump macos clean ssh-fix help
 
 # デフォルトターゲット: ヘルプを表示
@@ -31,10 +36,16 @@ update:
 ## stow: 全パッケージのシンボリックリンクを作成/更新する
 stow:
 	@echo "\033[1;36m==> GNU Stow: リンク作成\033[0m"
+	@for d in $(UNFOLD_DIRS); do mkdir -p "$$d"; done
 	@for pkg in $(STOW_PACKAGES); do \
 		if [ -d "$(DOTFILES)/$$pkg" ]; then \
 			echo "  stow: $$pkg"; \
-			stow $(STOW_FLAGS) $$pkg; \
+			if ! stow $(STOW_FLAGS) $$pkg 2>/dev/null; then \
+				echo "\033[0;33m  [WARN] $$pkg: 競合検出 — adopt → git restore で解決\033[0m"; \
+				stow --adopt --target=$(HOME) --dir=$(DOTFILES) $$pkg; \
+				git -C $(DOTFILES) checkout -- $$pkg; \
+				stow $(STOW_FLAGS) $$pkg; \
+			fi; \
 		else \
 			echo "\033[0;33m[WARN] $$pkg ディレクトリが見つかりません — スキップ\033[0m"; \
 		fi; \

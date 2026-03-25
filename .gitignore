@@ -15,6 +15,9 @@
 # ローカル設定
 **/local.zsh
 
+# stow 競合時のバックアップ
+.stow-backup/
+
 # SSH ホスト固有設定（config.d/ 内のファイル）
 ssh/.ssh/config.d/*
 !ssh/.ssh/config.d/.gitkeep
