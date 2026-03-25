@@ -87,6 +87,11 @@ autocmd("BufWritePre", {
   group = "TrimWhitespace",
   desc = "保存時にファイル末尾の余分な空白行と各行末の空白を削除する",
   callback = function()
+    -- 末尾空白が意味を持つファイルタイプは除外
+    local exclude_ft = { "markdown", "diff" }
+    if vim.tbl_contains(exclude_ft, vim.bo.filetype) then
+      return
+    end
     local save_cursor = vim.fn.getpos(".")
     -- 各行末の空白を削除
     vim.cmd([[%s/\s\+$//e]])

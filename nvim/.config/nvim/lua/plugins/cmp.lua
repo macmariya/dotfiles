@@ -113,7 +113,9 @@ return {
       },
 
       -- ゴーストテキスト（薄く候補を表示）
-      ghost_text = true,
+      experimental = {
+        ghost_text = { hl_group = "CmpGhostText" },
+      },
     })
 
     -- コマンドラインの補完設定（/ 検索）

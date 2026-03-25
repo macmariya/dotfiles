@@ -8,7 +8,8 @@ set -euo pipefail
 # ---------------------------------------------------------------------------
 # スクリプト自身の絶対パスから dotfiles ルートを自動検出
 DOTFILES="${0:A:h}"
-STOW_PACKAGES=(zsh git tmux nvim ghostty ssh)
+# .stow-packages を単一ソースとして読み込む
+STOW_PACKAGES=(${(z)$(<"${DOTFILES}/.stow-packages")})
 OMZ_DIR="${HOME}/.oh-my-zsh"
 OMZ_CUSTOM="${OMZ_DIR}/custom/plugins"
 
@@ -258,7 +259,7 @@ if [[ -x "$HOME/.claude/bin/claude" ]]; then
   success "Claude Code (CLI) は既にインストール済みです: $("$HOME/.claude/bin/claude" --version 2>/dev/null || echo 'installed')"
 else
   info "Claude Code をインストールします..."
-  curl -fsSL https://claude.ai/install.sh | bash
+  /bin/bash -c "$(curl -fsSL https://claude.ai/install.sh)"
   success "Claude Code のインストールが完了しました"
   info "初回起動時にブラウザでサブスクリプション認証を行ってください:"
   info "  claude"

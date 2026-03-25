@@ -24,7 +24,7 @@ make install       # bootstrap.sh 実行（全 10 フェーズ）
 
 ### GNU Stow パッケージ構造
 
-各ディレクトリが `$HOME` へのシンボリックリンク元。`STOW_PACKAGES` は `Makefile` と `bootstrap.sh` の両方で定義されており、追加時は両方を更新する必要がある。
+各ディレクトリが `$HOME` へのシンボリックリンク元。`STOW_PACKAGES` は `.stow-packages` ファイルで一元管理されており、パッケージ追加時はこのファイルのみ更新すればよい。
 
 ### シークレット管理
 

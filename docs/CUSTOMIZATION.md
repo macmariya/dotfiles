@@ -30,27 +30,16 @@ ls -la ~/.config/starship.toml
 
 ### Makefile への追加
 
-`Makefile` と `bootstrap.sh` の `STOW_PACKAGES` に新しいパッケージ名を追加すると、
-`make stow` および `bootstrap.sh` の実行時に自動で処理されます。
-
-`Makefile` の該当行を編集します。
-
-```makefile
-# 変更前
-STOW_PACKAGES := zsh git tmux nvim ghostty
-
-# 変更後（starship を追加した例）
-STOW_PACKAGES := zsh git tmux nvim ghostty bin ssh starship
-```
-
-`bootstrap.sh` の該当行も同様に編集します。
+`.stow-packages` ファイルにパッケージ名を追加すると、
+`make stow` および `bootstrap.sh` の両方に自動で反映されます。
 
 ```zsh
+# .stow-packages を編集（スペース区切りの1行）
 # 変更前
-STOW_PACKAGES=(zsh git tmux nvim ghostty)
+zsh git tmux nvim ghostty ssh
 
-# 変更後
-STOW_PACKAGES=(zsh git tmux nvim ghostty bin ssh starship)
+# 変更後（starship を追加した例）
+zsh git tmux nvim ghostty ssh starship
 ```
 
 ### Stow のディレクトリ構造ルール
@@ -104,9 +93,13 @@ export HTTP_PROXY="http://proxy.example.com:8080"
 export HTTPS_PROXY="$HTTP_PROXY"
 export NO_PROXY="localhost,127.0.0.1"
 
-# Keychain からシークレットを取得して環境変数に展開
-export GITHUB_TOKEN=$(security find-generic-password -s github-pat -a $USER -w 2>/dev/null || true)
-export OPENAI_API_KEY=$(security find-generic-password -s openai-api-key -a $USER -w 2>/dev/null || true)
+# シークレットは環境変数に常駐させず、関数方式で必要時のみ取得する
+# （exports.zsh の github-pat() と同じパターン）
+# 環境変数に export すると全子プロセスに漏洩し、ログやクラッシュレポートに残るリスクがある
+openai-api-key() {
+  security find-generic-password -s openai-api-key -a "$USER" -w 2>/dev/null
+}
+# 使用例: curl -H "Authorization: Bearer $(openai-api-key)" ...
 ```
 
 ### .gitconfig.local

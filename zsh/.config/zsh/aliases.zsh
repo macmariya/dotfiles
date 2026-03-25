@@ -2,7 +2,8 @@
 # 頻出コマンドの短縮形と便利なエイリアス
 
 # --- dotfiles管理 ---
-alias dots='cd ~/dev/dotfiles'
+# ZDOTDIR から dotfiles ルートを逆算（zsh/.config/zsh → 3階層上）
+alias dots='cd "${ZDOTDIR:h:h:h}"'
 alias reload='exec zsh'
 
 # --- エディタ ---

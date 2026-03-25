@@ -48,7 +48,7 @@ opt.pumheight = 10        -- ポップアップメニューの最大高さ
 opt.conceallevel = 0      -- テキストの隠蔽レベル
 
 -- ── 日本語対応 ──────────────────────────────────────────
-opt.encoding = "utf-8"                          -- 内部エンコーディング
+-- Neovim は内部エンコーディングが常に UTF-8 のため opt.encoding は不要
 opt.fileencoding = "utf-8"                      -- ファイル保存時のエンコーディング
 opt.fileencodings = "utf-8,euc-jp,cp932"        -- ファイル読み込み時の自動判定順序
 

@@ -4,8 +4,8 @@
 SHELL := /bin/zsh
 DOTFILES := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
-# GNU Stow で管理するパッケージ一覧
-STOW_PACKAGES := zsh git tmux nvim ghostty ssh
+# GNU Stow で管理するパッケージ一覧（.stow-packages を単一ソースとする）
+STOW_PACKAGES := $(shell cat $(dir $(realpath $(lastword $(MAKEFILE_LIST)))).stow-packages)
 
 # stow コマンドの共通オプション
 STOW_FLAGS := --restow --target=$(HOME) --dir=$(DOTFILES)
